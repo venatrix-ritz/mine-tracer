@@ -6,6 +6,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 public class OptimizedChestEventListener {
+    // 26.2 groups the 16 dyed shulker boxes into a ColorCollection; its asList() builds a new
+    // list on every call, so snapshot it once rather than per block break
+    private static final java.util.Set<Block> DYED_SHULKER_BOXES = java.util.Set.copyOf(Blocks.DYED_SHULKER_BOX.asList());
+
     public static void register() {
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             Block block = state.getBlock();
@@ -42,15 +46,7 @@ public class OptimizedChestEventListener {
         }
         
         // Check shulker boxes
-        if (block == Blocks.SHULKER_BOX || block == Blocks.WHITE_SHULKER_BOX || 
-            block == Blocks.ORANGE_SHULKER_BOX || block == Blocks.MAGENTA_SHULKER_BOX || 
-            block == Blocks.LIGHT_BLUE_SHULKER_BOX || block == Blocks.YELLOW_SHULKER_BOX || 
-            block == Blocks.LIME_SHULKER_BOX || block == Blocks.PINK_SHULKER_BOX || 
-            block == Blocks.GRAY_SHULKER_BOX || block == Blocks.LIGHT_GRAY_SHULKER_BOX || 
-            block == Blocks.CYAN_SHULKER_BOX || block == Blocks.PURPLE_SHULKER_BOX || 
-            block == Blocks.BLUE_SHULKER_BOX || block == Blocks.BROWN_SHULKER_BOX || 
-            block == Blocks.GREEN_SHULKER_BOX || block == Blocks.RED_SHULKER_BOX || 
-            block == Blocks.BLACK_SHULKER_BOX) {
+        if (block == Blocks.SHULKER_BOX || DYED_SHULKER_BOXES.contains(block)) {
             return true;
         }
         
